@@ -1,4 +1,4 @@
-import wandb
+# import wandb
 from equivariant_diffusion.utils import assert_mean_zero_with_mask, remove_mean_with_mask,\
     assert_correctly_masked, sample_center_gravity_zero_gaussian_with_mask
 import numpy as np
@@ -83,15 +83,17 @@ def train_epoch(args, loader, epoch, model, model_dp, model_ema, ema, device, dt
                                             prop_dist, epoch=epoch)
             print(f'Sampling took {time.time() - start:.2f} seconds')
 
-            vis.visualize(f"outputs/{args.exp_name}/epoch_{epoch}_{i}", dataset_info=dataset_info, wandb=wandb)
-            vis.visualize_chain(f"outputs/{args.exp_name}/epoch_{epoch}_{i}/chain/", dataset_info, wandb=wandb)
-            if len(args.conditioning) > 0:
-                vis.visualize_chain("outputs/%s/epoch_%d/conditional/" % (args.exp_name, epoch), dataset_info,
-                                    wandb=wandb, mode='conditional')
-        wandb.log({"Batch NLL": nll.item()}, commit=True)
+            # vis.visualize(f"outputs/{args.exp_name}/epoch_{epoch}_{i}", dataset_info=dataset_info, wandb=wandb)
+            # vis.visualize_chain(f"outputs/{args.exp_name}/epoch_{epoch}_{i}/chain/", dataset_info, wandb=wandb)
+            # if len(args.conditioning) > 0:
+            #     vis.visualize_chain("outputs/%s/epoch_%d/conditional/" % (args.exp_name, epoch), dataset_info,
+            #                         wandb=wandb, mode='conditional')
+        # wandb.log({"Batch NLL": nll.item()}, commit=True)
+        print("Batch NLL: ", nll.item())
         if args.break_train_epoch:
             break
-    wandb.log({"Train Epoch NLL": np.mean(nll_epoch)}, commit=False)
+    # wandb.log({"Train Epoch NLL": np.mean(nll_epoch)}, commit=False)
+    print("Train Epoch NLL: ", np.mean(nll_epoch))
 
 
 def check_mask_correct(variables, node_mask):
@@ -118,9 +120,7 @@ def test(args, loader, epoch, eval_model, device, dtype, property_norms, nodes_d
 
             if args.augment_noise > 0:
                 # Add noise eps ~ N(0, augment_noise) around points.
-                eps = sample_center_gravity_zero_gaussian_with_mask(x.size(),
-                                                                    x.device,
-                                                                    node_mask)
+                eps = sample_center_gravity_zero_gaussian_with_mask(x.size(),x.device,node_mask)
                 x = x + eps * args.augment_noise
 
             x = remove_mean_with_mask(x, node_mask)
@@ -191,9 +191,9 @@ def analyze_and_save(epoch, model_sample, nodes_dist, args, device, dataset_info
     molecules = {key: torch.cat(molecules[key], dim=0) for key in molecules}
     validity_dict, rdkit_tuple = analyze_stability_for_molecules(molecules, dataset_info)
 
-    wandb.log(validity_dict)
-    if rdkit_tuple is not None:
-        wandb.log({'Validity': rdkit_tuple[0][0], 'Uniqueness': rdkit_tuple[0][1], 'Novelty': rdkit_tuple[0][2]})
+    # wandb.log(validity_dict)
+    # if rdkit_tuple is not None:
+    #     wandb.log({'Validity': rdkit_tuple[0][0], 'Uniqueness': rdkit_tuple[0][1], 'Novelty': rdkit_tuple[0][2]})
     return validity_dict
 
 
