@@ -40,7 +40,7 @@ parser.add_argument('--diffusion_noise_schedule', type=str, default='polynomial_
 parser.add_argument('--diffusion_noise_precision', type=float, default=1e-5)
 parser.add_argument('--diffusion_loss_type', type=str, default='l2',help='vlb, l2')
 parser.add_argument('--n_epochs', type=int, default=200)
-parser.add_argument('--batch_size', type=int, default=1)
+parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--brute_force', type=eval, default=False, help='True | False')
 parser.add_argument('--actnorm', type=eval, default=True,help='True | False')

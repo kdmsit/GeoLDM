@@ -20,14 +20,14 @@ def train_epoch(args, loader, epoch, model, model_dp, model_ema, ema, device, dt
     n_iterations = len(loader)
     for i, data in tqdm(enumerate(loader)):
         x = data['positions'].to(device, dtype)
-        print(x[0][0])
+        # print(x[0][0])
         node_mask = data['atom_mask'].to(device, dtype).unsqueeze(2)
         edge_mask = data['edge_mask'].to(device, dtype)
         one_hot = data['one_hot'].to(device, dtype)
         charges = (data['charges'] if args.include_charges else torch.zeros(0)).to(device, dtype)
 
         x = remove_mean_with_mask(x, node_mask)
-        print(x[0][0])
+        # print(x[0][0])
 
         if args.augment_noise > 0:
             # Add noise eps ~ N(0, augment_noise) around points.
