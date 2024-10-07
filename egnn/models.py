@@ -232,7 +232,7 @@ class EGNN_encoder_QM9(nn.Module):
             vel = remove_mean(vel)
         else:
             vel = remove_mean_with_mask(vel, node_mask.view(bs, n_nodes, 1))
-        print(vel[0][0])
+        # print(vel[0][0])
 
         h_final = self.final_mlp(h_final)
         h_final = h_final * node_mask if node_mask is not None else h_final
