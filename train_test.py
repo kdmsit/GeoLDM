@@ -74,6 +74,7 @@ def train_epoch(args, loader, epoch, model, model_dp, model_ema, ema, device, dt
                   f"Loss {loss.item():.2f}, NLL: {nll.item():.2f}, "
                   f"RegTerm: {reg_term.item():.1f}, "
                   f"GradNorm: {grad_norm:.1f}")
+            print()
         nll_epoch.append(nll.item())
         if (epoch % args.test_epochs == 0) and (i % args.visualize_every_batch == 0) and not (epoch == 0 and i == 0) and args.train_diffusion:
             start = time.time()
@@ -91,7 +92,7 @@ def train_epoch(args, loader, epoch, model, model_dp, model_ema, ema, device, dt
             #     vis.visualize_chain("outputs/%s/epoch_%d/conditional/" % (args.exp_name, epoch), dataset_info,
             #                         wandb=wandb, mode='conditional')
         # wandb.log({"Batch NLL": nll.item()}, commit=True)
-        print("Batch NLL: ", nll.item())
+        # print("Batch NLL: ", nll.item())
         if args.break_train_epoch:
             break
     # wandb.log({"Train Epoch NLL": np.mean(nll_epoch)}, commit=False)

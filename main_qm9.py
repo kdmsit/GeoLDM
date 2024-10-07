@@ -65,7 +65,7 @@ parser.add_argument('--dataset', type=str, default='qm9_second_half', help='qm9 
 parser.add_argument('--datadir', type=str, default='qm9/temp',help='qm9 directory')
 parser.add_argument('--filter_n_atoms', type=int, default=None,help='When set to an integer value, QM9 will only contain molecules of that amount of atoms')
 parser.add_argument('--dequantization', type=str, default='argmax_variational',help='uniform | variational | argmax_variational | deterministic')
-parser.add_argument('--n_report_steps', type=int, default=1)
+parser.add_argument('--n_report_steps', type=int, default=50)
 # parser.add_argument('--wandb_usr', type=str)
 # parser.add_argument('--no_wandb', action='store_true', help='Disable wandb')
 # parser.add_argument('--online', type=bool, default=True, help='True = wandb online -- False = wandb offline')
