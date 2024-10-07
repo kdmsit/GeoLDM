@@ -10,7 +10,7 @@ import qm9.utils as qm9utils
 from qm9 import losses
 import time
 import torch
-
+from tqdm import tqdm
 
 def train_epoch(args, loader, epoch, model, model_dp, model_ema, ema, device, dtype, property_norms, optim,
                 nodes_dist, gradnorm_queue, dataset_info, prop_dist):
@@ -18,21 +18,23 @@ def train_epoch(args, loader, epoch, model, model_dp, model_ema, ema, device, dt
     model.train()
     nll_epoch = []
     n_iterations = len(loader)
-    for i, data in enumerate(loader):
+    for i, data in tqdm(enumerate(loader)):
         x = data['positions'].to(device, dtype)
+        print(x[0][0])
         node_mask = data['atom_mask'].to(device, dtype).unsqueeze(2)
         edge_mask = data['edge_mask'].to(device, dtype)
         one_hot = data['one_hot'].to(device, dtype)
         charges = (data['charges'] if args.include_charges else torch.zeros(0)).to(device, dtype)
 
         x = remove_mean_with_mask(x, node_mask)
+        print(x[0][0])
 
         if args.augment_noise > 0:
             # Add noise eps ~ N(0, augment_noise) around points.
             eps = sample_center_gravity_zero_gaussian_with_mask(x.size(), x.device, node_mask)
             x = x + eps * args.augment_noise
 
-        x = remove_mean_with_mask(x, node_mask)
+        # x = remove_mean_with_mask(x, node_mask)
         if args.data_augmentation:
             x = utils.random_rotation(x).detach()
 
@@ -50,8 +52,8 @@ def train_epoch(args, loader, epoch, model, model_dp, model_ema, ema, device, dt
         optim.zero_grad()
 
         # transform batch through flow
-        nll, reg_term, mean_abs_z = losses.compute_loss_and_nll(args, model_dp, nodes_dist,
-                                                                x, h, node_mask, edge_mask, context)
+        nll, reg_term, mean_abs_z = losses.compute_loss_and_nll(args, model_dp, nodes_dist, x, h, node_mask, edge_mask, context)
+
         # standard nll from forward KL
         loss = nll + args.ode_regularization * reg_term
         loss.backward()

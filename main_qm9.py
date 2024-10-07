@@ -40,7 +40,7 @@ parser.add_argument('--diffusion_noise_schedule', type=str, default='polynomial_
 parser.add_argument('--diffusion_noise_precision', type=float, default=1e-5)
 parser.add_argument('--diffusion_loss_type', type=str, default='l2',help='vlb, l2')
 parser.add_argument('--n_epochs', type=int, default=200)
-parser.add_argument('--batch_size', type=int, default=128)
+parser.add_argument('--batch_size', type=int, default=1)
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--brute_force', type=eval, default=False, help='True | False')
 parser.add_argument('--actnorm', type=eval, default=True,help='True | False')
@@ -144,6 +144,8 @@ utils.create_folders(args)
 # Retrieve QM9 dataloaders
 dataloaders, charge_scale = dataset.retrieve_dataloaders(args)
 data_dummy = next(iter(dataloaders['train']))
+print(data_dummy.keys())
+
 
 
 if len(args.conditioning) > 0:
@@ -154,6 +156,8 @@ if len(args.conditioning) > 0:
 else:
     context_node_nf = 0
     property_norms = None
+
+# exit()
 
 args.context_node_nf = context_node_nf
 
@@ -169,7 +173,7 @@ else:
 
 model = model.to(device)
 optim = get_optim(args, model)
-print(model)
+# print(model)
 
 gradnorm_queue = utils.Queue()
 gradnorm_queue.add(3000)  # Add large value that will be flushed.

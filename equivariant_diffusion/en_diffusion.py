@@ -859,27 +859,18 @@ class EnHierarchicalVAE(torch.nn.Module):
     """
     The E(n) Hierarchical VAE Module.
     """
-    def __init__(
-            self,
-            encoder: models.EGNN_encoder_QM9,
-            decoder: models.EGNN_decoder_QM9,
-            in_node_nf: int, n_dims: int, latent_node_nf: int,
-            kl_weight: float,
-            norm_values=(1., 1., 1.), norm_biases=(None, 0., 0.), 
-            include_charges=True):
+    def __init__(self, encoder: models.EGNN_encoder_QM9, decoder: models.EGNN_decoder_QM9,
+                 in_node_nf: int, n_dims: int, latent_node_nf: int, kl_weight: float,norm_values=(1., 1., 1.),
+                 norm_biases=(None, 0., 0.),include_charges=True):
         super().__init__()
-
         self.include_charges = include_charges
-
         self.encoder = encoder
         self.decoder = decoder
-
         self.in_node_nf = in_node_nf
         self.n_dims = n_dims
         self.latent_node_nf = latent_node_nf
         self.num_classes = self.in_node_nf - self.include_charges
         self.kl_weight = kl_weight
-
         self.norm_values = norm_values
         self.norm_biases = norm_biases
         self.register_buffer('buffer', torch.zeros(1))
@@ -944,6 +935,7 @@ class EnHierarchicalVAE(torch.nn.Module):
         # KL for invariant features.
         zeros, ones = torch.zeros_like(z_h_mu), torch.ones_like(z_h_sigma)
         loss_kl_h = gaussian_KL(z_h_mu, ones, zeros, ones, node_mask)
+
         # KL for equivariant features.
         assert z_x_sigma.mean(dim=(1,2), keepdim=True).expand_as(z_x_sigma).allclose(z_x_sigma, atol=1e-7)
         zeros, ones = torch.zeros_like(z_x_mu), torch.ones_like(z_x_sigma.mean(dim=(1,2)))

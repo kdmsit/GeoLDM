@@ -184,8 +184,10 @@ class EGNN(nn.Module):
     def forward(self, h, x, edge_index, node_mask=None, edge_mask=None):
         # Edit Emiel: Remove velocity as input
         distances, _ = coord2diff(x, edge_index)
+
         if self.sin_embedding is not None:
             distances = self.sin_embedding(distances)
+
         h = self.embedding(h)
         for i in range(0, self.n_layers):
             h, x = self._modules["e_block_%d" % i](h, x, edge_index, node_mask=node_mask, edge_mask=edge_mask, edge_attr=distances)

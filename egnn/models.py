@@ -200,6 +200,7 @@ class EGNN_encoder_QM9(nn.Module):
         edge_mask = edge_mask.view(bs*n_nodes*n_nodes, 1)
         xh = xh.view(bs*n_nodes, -1).clone() * node_mask
         x = xh[:, 0:self.n_dims].clone()
+        print(x[0])
         if h_dims == 0:
             h = torch.ones(bs*n_nodes, 1).to(self.device)
         else:
@@ -212,6 +213,7 @@ class EGNN_encoder_QM9(nn.Module):
 
         if self.mode == 'egnn_dynamics':
             h_final, x_final = self.egnn(h, x, edges, node_mask=node_mask, edge_mask=edge_mask)
+            print(x_final[0])
             vel = x_final * node_mask  # This masking operation is redundant but just in case
         elif self.mode == 'gnn_dynamics':
             xh = torch.cat([x, h], dim=1)
@@ -219,9 +221,7 @@ class EGNN_encoder_QM9(nn.Module):
             vel = output[:, 0:3] * node_mask
             h_final = output[:, 3:]
 
-        else:
-            raise Exception("Wrong mode %s" % self.mode)
-
+        print(vel[0])
         vel = vel.view(bs, n_nodes, -1)
 
         if torch.any(torch.isnan(vel)):
@@ -232,6 +232,7 @@ class EGNN_encoder_QM9(nn.Module):
             vel = remove_mean(vel)
         else:
             vel = remove_mean_with_mask(vel, node_mask.view(bs, n_nodes, 1))
+        print(vel[0][0])
 
         h_final = self.final_mlp(h_final)
         h_final = h_final * node_mask if node_mask is not None else h_final
